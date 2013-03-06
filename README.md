@@ -20,6 +20,6 @@ What this fabfile does NOT (currently) have: VCS commands (commit/push/pull/etc.
 - `fab export_db` (dumps, uploads, imports db to prod - only for the brave)
 - `fab -l` to view full list of commands.
 
-Notes:
+### Notes: ###
 - Security note: There's an .htaccess file containing "Deny from all" in the `fabfile` folder, however you'll want to be careful about putting this on a production/live server, specifically the settings.py file, so that you don't expose access to sensitive information. If you do put this code on a live server, you will *definitely* want to verify that those files are not accessible.
 - As pointed out above, there's no cleanup mechanism for dumped databases.
