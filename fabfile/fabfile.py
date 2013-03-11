@@ -135,9 +135,9 @@ def dump_local_db_for_deploy():
 def run_db_migration(dest='local'):
 	""" Executes MySQL commands for migrating Wordpress from one environment to another. Parameter defaults to "local", but any environment defined in the settings.db dictionary (default: local, prod) can be used. """
 	# Check for whether to use MySQLdb or bash. If MySQLdb, set up the connection.
+	db = db_settings.get('local')
 	if use_db:
 		# Force this to work on local databases only!
-		db = db_settings.get('local')
 		db_conn = MySQLdb.connect(db.get('host'), db.get('user'), db.get('pass'), db.get('db'))
 		cursor = db_conn.cursor()
 
@@ -147,8 +147,8 @@ def run_db_migration(dest='local'):
 	# attachments aren't much of a problem, and I tend to only update the bare minimum to make Wordpress run locally.
 	wp_url = LOCAL_URL if (dest == 'local') else PROD_URL
 	sql = [
-		('UPDATE %s_options SET option_value="%s/%s" WHERE option_name="siteurl"' % (WP_PREFIX, wp_url, WP_FOLDER)),
-		('UPDATE %s_options SET option_value="%s/" WHERE option_name="home"' % (WP_PREFIX, wp_url)),
+		("UPDATE %s.%s_options SET option_value='%s/%s' WHERE option_name='siteurl'" % (db.get('db'), WP_PREFIX, wp_url, WP_FOLDER)),
+		("UPDATE %s.%s_options SET option_value='%s/' WHERE option_name='home'" % (db.get('db'), WP_PREFIX, wp_url)),
 		# Add new commands below:
 		#('UPDATE something yadda yadda.....')
 	]
@@ -157,7 +157,8 @@ def run_db_migration(dest='local'):
 		if not use_db:
 			# Do MySQL via bash
 			bash_cmd_vars = (db.get('user'), db.get('pass'), db.get('host'), db.get('db'), query)
-			cmd = ('mysqldump -u %s -p%s -h %s %s < "%s"' % bash_cmd_vars)
+			cmd = ('mysql -u %s -p%s -h %s %s -e "%s"' % bash_cmd_vars)
+			#print(cmd)
 			local(cmd) # again, forcing this command to run only on local server, NOT prod/remote
 		else:
 			# Do MySQL via MySQLdb
