@@ -1,3 +1,6 @@
+# This is the example settings file for the Fabfile for Wordpress module. Save a copy of this file in this current
+# directory, and name it settings.py.
+
 # A handle that can be used for naming dump files and such. Can be anything you like.
 PROJECT_NAME = 'myproject'
 
@@ -54,10 +57,13 @@ db_settings = {
 dirs = {
     'local':{
         'archive': '/www/_archive/myproject',
+		'releases': False,
         'webroot': '/www/myproject'
     },
     'prod':{
         'archive': '/path/to/archive/folder',
-        'webroot': '/path/to/public_html'
+		'releases': '/home/jaes/releases',
+        'webroot': '/path/to/public_html',
+		'git_repo': '/home/jaes/git/jaes.git',
     }
 }

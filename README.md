@@ -11,7 +11,7 @@ What this fabfile does NOT (currently) have: VCS commands (commit/push/pull/etc.
 
 - New to [Fabric](http://fabfile.org)? Check out [this crash course](https://gist.github.com/DavidWittman/1886632).
 - Clone to your WordPress site root (or anywhere actually).
-- Update the settings & options in `fabfile/settings.py`.
+- Create a `fabfile/settings.py` by copying the `fabfile/settings_example.py`. Populate this new file with info specific to your Wordpress setup. (See file for more info.)
 
 ### Typical usage: ###
 

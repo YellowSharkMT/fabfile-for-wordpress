@@ -21,7 +21,12 @@ import time, random, string, sys
 from fabric.api import *
 
 # Import our modules:
-from .settings import dirs, hosts, WP_UPLOADS_PROD_LOCATION, WP_UPLOADS_LOCAL_LOCATION
+try:
+	from .settings import dirs, hosts, WP_UPLOADS_PROD_LOCATION, WP_UPLOADS_LOCAL_LOCATION
+except:
+	print('Unable to load settings file. Have you created one yet? See fabfile/settings_example.py file for more info.')
+	sys.exit(0)
+
 import db
 from .deploy.release import Release
 
