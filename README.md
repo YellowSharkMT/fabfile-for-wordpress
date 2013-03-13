@@ -5,7 +5,7 @@ A small set of commands for managing Wordpress databases on production &amp; dev
 
 This fabfile is mostly used for shuffling around Wordpress databases, from production to dev, or vice-versa. It has functions to export, migrate, and import databases, as well as to transfer them between environments. Also, there's a function to download the contents of the Wordpress uploads directory. It should be noted that there are no cleanup functions for dumped/exported files, both local & remote: they are left in place, and not deleted.
 
-What this fabfile does NOT (currently) have: VCS commands (commit/push/pull/etc.) & deployment schemes.
+What this fabfile does NOT (currently) have: VCS commands (commit/push/pull/etc.) & deployment schemes (actually, one deployment scheme is in master right now, use at your own risk of course. Documentation to come...)
 
 ### To use: ###
 
@@ -15,10 +15,10 @@ What this fabfile does NOT (currently) have: VCS commands (commit/push/pull/etc.
 
 ### Typical usage: ###
 
-- `fab import_db import_uploads` (imports/migrates remote database, pulls down uploads.)
-- `fab fetch_remote_db` (dumps remote/prod db to remote/prod archive folder, downloads it to local archive folder)
-- `fab export_db` (dumps, uploads, imports db to prod - only for the brave)
-- `fab -l` to view full list of commands.
+- fab deploy (TODO: provide explanation on default behavior. See the code, and `fab -l` for more info.)
+- fab migrate
+- fab update
+- fab dump
 
 ### Notes: ###
 - Security note: There's an .htaccess file containing "Deny from all" in the `fabfile` folder, however you'll want to be careful about putting this on a production/live server, specifically the settings.py file, so that you don't expose access to sensitive information. If you do put this code on a live server, you will *definitely* want to verify that those files are not accessible.
