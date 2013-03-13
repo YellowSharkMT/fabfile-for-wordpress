@@ -62,8 +62,8 @@ dirs = {
     },
     'prod':{
         'archive': '/path/to/archive/folder',
-		'releases': '/home/jaes/releases',
+		'releases': '/path/to/releases/folder',
         'webroot': '/path/to/public_html',
-		'git_repo': '/home/jaes/git/jaes.git',
+		'git_repo': '/path/to/git/repo.git',
     }
 }
