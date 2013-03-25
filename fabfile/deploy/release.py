@@ -23,6 +23,12 @@ class Release:
 		self.pre_perform()
 		# Push files from source webroot to destination repo
 		env.host_string = settings.hosts.get(source)
+
+		# haven't test this yet...
+		# git = Git(source)
+		# git.push(destination, 'master')
+
+		# this is the to-be-updated code, which does indeed work:
 		with cd(settings.dirs.get(source).get('webroot')):
 			# Right here, it is absolutely critical that my local git repo has a remote named "prod". 
 			# TODO: be able to specify branches?
