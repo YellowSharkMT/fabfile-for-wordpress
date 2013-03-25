@@ -60,6 +60,7 @@ def fetch_prod_db():
 	
 	# Set to Local info for the download & import
 	dump_local_fn = ('%s/%s' % (dirs.get('local').get('archive'), dump_fn))
+	_prod_server()
 	get(dump_remote_fn, dump_local_fn)
 	return dump_local_fn
 
@@ -80,7 +81,7 @@ def push_local_db():
 def dump_prod_db():
 	""" Dumps Prod database to remote archive folder. """
 	db = db_settings.get('prod')
-	dump_fn = db.get('db','unknowndb') + '.dump_' + str(time.time()) + '.sql'
+	dump_fn = db.get('db','unknowndb') + '.prod.' + str(time.time()) + '.sql'
 	dump_full_fn = dirs.get('prod').get('archive', '~/archive') + '/' + dump_fn
 
 	bash_cmd_vars = (db.get('user'), db.get('pass'), db.get('host'), db.get('db'), dump_full_fn)
@@ -95,7 +96,7 @@ def dump_local_db():
 	_local_server()
 
 	db = db_settings.get('local')
-	dump_fn = db.get('db','unknowndb') + '.dump_' + str(time.time()) + '.sql'
+	dump_fn = db.get('db','unknowndb') + '.local.' + str(time.time()) + '.sql'
 	dump_full_fn = dirs.get('local').get('archive', '~/archive') + '/' + dump_fn
 
 	bash_cmd_vars = (db.get('user'), db.get('pass'), db.get('host'), db.get('db'), dump_full_fn)
