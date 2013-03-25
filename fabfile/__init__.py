@@ -29,6 +29,7 @@ except:
 
 import db
 from .deploy.release import Release
+from .deploy.backup import Backup
 
 # Leaving this as True is generally harmless, it simply allows you to enter a connection
 # name from your .ssh/config file as a value for env.host_string (set this in settings.hosts)
@@ -81,7 +82,20 @@ def dump(location = 'prod', fetch = False)	:
 	print('Filename: %s' % dump_fn)
 	print('-----------------------------------------')	
 
-	
+@task
+def backup(source = 'local', destination = 'backup'):
+	""" Performs backup operation. See README for exact details. (:source, :destination) """
+	# This function might need a bit more explanation, it actually backs up a number of things:
+	# - production db: dumps, fetches.
+	# - local db: dumps.
+	# - archives folder that now contains those 2 databases: rsync'd to the backup server
+	# - wordpress uploads folder: rsync'd from prod to local, then from local to backup
+	# - git repo: pushes local repo to backup server.
+	print('-----------------------------------------')
+	backup = Backup(source, destination)
+	print('Completed backing up production & local servers to the backup server.')
+	print('-----------------------------------------')
+
 def sync_prod_to_local():
 	""" Syncs files from prod to local. """
 	sync_uploads_prod_to_local()

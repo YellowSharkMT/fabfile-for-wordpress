@@ -19,7 +19,22 @@ What this fabfile does NOT (currently) have: VCS commands (commit/push/pull/etc.
 - fab migrate
 - fab update
 - fab dump
+- fab backup
 
 ### Notes: ###
 - Security note: There's an .htaccess file containing "Deny from all" in the `fabfile` folder, however you'll want to be careful about putting this on a production/live server, specifically the settings.py file, so that you don't expose access to sensitive information. If you do put this code on a live server, you will *definitely* want to verify that those files are not accessible.
 - As pointed out above, there's no cleanup mechanism for dumped databases.
+
+
+## Release History ##
+2013-03-25: Added a backup task, which does the following, out-of-the box:
+
+- Production db: dumps, fetches.
+- Local db: dumps.
+- Archives folder that now contains those 2 databases: rsync'd to the backup server
+- Wordpress uploads folder: rsync'd from prod to local, then from local to backup
+- Git repo: pushes local repo to backup server.
+
+Note: updated structure for the settings file. See settings_Example.py for more info.
+
+**Deprecation warning for next version:** In the settings file, the 2 variables for the Wordpress uploads directory are going to be removed (WP_UPLOADS_PROD_LOCATION, WP_UPLOADS_LOCAL_LOCATION), in favor of adding them to the settings.dirs value. Again, see settings_example.py for more info.
