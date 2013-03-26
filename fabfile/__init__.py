@@ -20,7 +20,7 @@ from __future__ import with_statement
 import time, random, string, sys
 from fabric.api import *
 
-# Import our modules:
+# Import Settings:
 try:
 	from .settings import dirs, hosts, WP_UPLOADS_PROD_LOCATION, WP_UPLOADS_LOCAL_LOCATION
 except:
@@ -28,13 +28,18 @@ except:
 	sys.exit(0)
 
 import db
-from .deploy.release import Release
+# Import Release module (attempt to find extended version first)
+try:
+	from .extend.deploy.release import ReleaseCustom as Release
+except:
+	from .deploy.release import Release
+
+# Import Backup module
 from .deploy.backup import Backup
 
 # Leaving this as True is generally harmless, it simply allows you to enter a connection
 # name from your .ssh/config file as a value for env.host_string (set this in settings.hosts)
 env.use_ssh_config = True
-	
 
 #############################################################################
 ## Public functions for the Fab commands.
@@ -96,6 +101,7 @@ def backup(source = 'local', destination = 'backup'):
 	print('Completed backing up production & local servers to the backup server.')
 	print('-----------------------------------------')
 
+# TODO: migrate these into Classes, get them out of the __init__ module.
 def sync_prod_to_local():
 	""" Syncs files from prod to local. """
 	sync_uploads_prod_to_local()
@@ -105,7 +111,6 @@ def sync_local_to_prod():
 	release = Release(git = True)
 	release.perform()
 	pass
-	
 	
 def sync_uploads_prod_to_local():
 	""" Uses rsync to pull down uploads from Prod to Local """
