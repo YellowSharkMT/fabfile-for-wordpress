@@ -1,3 +1,8 @@
+## 0.3a (March 26, 2013)
+
+Added an `extend` module, so end-users can write their own customized classes to extend our own. An example of the intended usage is included in `fabfile/extend/deploy/release_example.py`, demonstrating how to add your own actions to the post-release function (the example shows how to symlink a directory into the new webroot).
+
+
 ## 0.2 (March 25, 2013)
 
 Added a backup task, which does the following, out-of-the box:
