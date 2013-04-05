@@ -8,7 +8,7 @@ import fabfile.settings as settings
 # future: from .vcs import Git
 
 
-class Release:
+class Release(object):
 	dirs = settings.dirs
 	git = False
 	svn = False
