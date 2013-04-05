@@ -22,12 +22,18 @@ from fabric.api import *
 
 # Import Settings:
 try:
-	from .settings import dirs, hosts, WP_UPLOADS_PROD_LOCATION, WP_UPLOADS_LOCAL_LOCATION
+	from fabfile.settings import dirs, hosts
 except:
 	print('Unable to load settings file. Have you created one yet? See fabfile/settings_example.py file for more info.')
 	sys.exit(0)
 
 import db
+
+# Optional Tools, introduced 2013-04-05
+USE_TOOLS = False
+if USE_TOOLS:
+	import tools
+
 # Import Release module (attempt to find extended version first)
 try:
 	from .extend.deploy.release import ReleaseCustom as Release
@@ -48,7 +54,7 @@ def deploy(source = 'prod', destination = 'local'):
 	""" Executes migrate and update. Default direction is prod to local. (:source, :destination) """
 	execute(migrate, source, destination)
 	execute(update, source, destination)
-	
+
 
 @task
 def migrate(source = 'prod', destination = 'local'):
@@ -60,7 +66,7 @@ def migrate(source = 'prod', destination = 'local'):
 	#getattr(db, fn_to_execute)()
 	print('-----------------------------------------')
 
-		
+
 @task
 def update(source = 'prod', destination = 'local'):
 	""" Executes code migration. Default direction is prod to local. (:source, :destination) """
@@ -69,8 +75,8 @@ def update(source = 'prod', destination = 'local'):
 	fn_to_execute = 'sync_%s_to_%s' % (source, destination)
 	execute(getattr(sys.modules[__name__], fn_to_execute))
 	print('-----------------------------------------')
-	
-	
+
+
 @task
 def dump(location = 'prod', fetch = False)	:
 	""" Dumps location database to archive folder. Fetch default is false. (:location, :fetch) """
@@ -83,9 +89,9 @@ def dump(location = 'prod', fetch = False)	:
 		print('Dumping %s database.' % (location))
 		fn_to_execute = 'dump_%s_db' % (location)
 		dump_fn = execute(getattr(db, fn_to_execute))
-		
+
 	print('Filename: %s' % dump_fn)
-	print('-----------------------------------------')	
+	print('-----------------------------------------')
 
 @task
 def backup(source = 'local', destination = 'backup'):
@@ -104,16 +110,28 @@ def backup(source = 'local', destination = 'backup'):
 # TODO: migrate these into Classes, get them out of the __init__ module.
 def sync_prod_to_local():
 	""" Syncs files from prod to local. """
-	sync_uploads_prod_to_local()
+	sync_uploads('prod', 'local')
 
 def sync_local_to_prod():
 	""" Syncs files from local to prod. """
 	release = Release(git = True)
 	release.perform()
 	pass
-	
-def sync_uploads_prod_to_local():
-	""" Uses rsync to pull down uploads from Prod to Local """
-	rsync_command = ('rsync -ravz %s %s' % (WP_UPLOADS_PROD_LOCATION, WP_UPLOADS_LOCAL_LOCATION))
+
+def sync_uploads(source_host, dest_host):
+	""" Uses rsync to pull down uploads from :source_host to :dest_host. (from the settings file) """
+	if source_host == 'prod':
+		rsync_vars= {
+		'source': '%s:%s' % (hosts.get(source_host), dirs.get(source_host).get('uploads')),
+		'dest': '%s' % (dirs.get(dest_host).get('uploads'))
+		}
+	elif source_host == 'local':
+		rsync_vars= {
+		'source': '%s' % (dirs.get(source_host).get('uploads')),
+		'dest': '%s:%s' % (hosts.get(dest_host), dirs.get(dest_host).get('uploads'))
+		}
+
+	rsync_command = 'rsync -ravz %(source)s/ %(dest)s' % rsync_vars
+	# Note: this is run on the local server, rsync requires that ONE of the servers is the local.
 	local(rsync_command)	
 	
