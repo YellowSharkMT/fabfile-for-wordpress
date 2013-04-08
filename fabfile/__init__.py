@@ -19,18 +19,16 @@
 from __future__ import with_statement
 import time, random, string, sys
 from fabric.api import *
+import db
 
 # Import Settings:
 try:
-	from fabfile.settings import dirs, hosts
+	from fabfile.settings import dirs, hosts, USE_TOOLS
 except:
 	print('Unable to load settings file. Have you created one yet? See fabfile/settings_example.py file for more info.')
 	sys.exit(0)
 
-import db
-
-# Optional Tools, introduced 2013-04-05
-USE_TOOLS = False
+# Optional Tools, (introduced 2013-04-05)
 if USE_TOOLS:
 	import tools
 
@@ -68,12 +66,12 @@ def migrate(source = 'prod', destination = 'local'):
 
 
 @task
-def update(source = 'prod', destination = 'local'):
+def update(source = 'prod', destination = 'local', dry_run = False):
 	""" Executes code migration. Default direction is prod to local. (:source, :destination) """
 	print('-----------------------------------------')
 	print('Updating code from %s to %s' % (source, destination))
 	fn_to_execute = 'sync_%s_to_%s' % (source, destination)
-	execute(getattr(sys.modules[__name__], fn_to_execute))
+	execute(getattr(sys.modules[__name__], fn_to_execute), dry_run)
 	print('-----------------------------------------')
 
 
@@ -108,13 +106,13 @@ def backup(source = 'local', destination = 'backup'):
 	print('-----------------------------------------')
 
 # TODO: migrate these into Classes, get them out of the __init__ module.
-def sync_prod_to_local():
+def sync_prod_to_local(dry_run = False):
 	""" Syncs files from prod to local. """
 	sync_uploads('prod', 'local')
 
-def sync_local_to_prod():
+def sync_local_to_prod(dry_run = False):
 	""" Syncs files from local to prod. """
-	release = Release(git = True)
+	release = Release(git = True, dry_run = dry_run)
 	release.perform()
 	pass
 

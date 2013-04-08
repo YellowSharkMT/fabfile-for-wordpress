@@ -8,6 +8,10 @@ PROJECT_NAME = 'myproject'
 LOCAL_URL = 'http://local.myproject.com'
 PROD_URL = 'http://myproject.com'
 
+# Use the Tools module? No harm in including it, it can lead to a cluttered set in `fab -l` results though.
+# See docs for what the tools module contains.
+USE_TOOLS = True
+
 # Host connection strings for Fabric. If env.use_ssh_config is set to True, you can use aliases assigned in
 # your .ssh/config file.
 hosts = {
