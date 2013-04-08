@@ -1,7 +1,7 @@
 import time, random, string, sys
 from fabric.api import *
 from fabric.contrib.console import confirm
-
+from fabric.contrib.files import exists
 ## Import custom settings
 from .settings import *
 
@@ -46,7 +46,8 @@ def import_local_to_prod():
 
 def insert_database(dump_fn, location = 'local'):
 	""" Inserts Wordpress database to specified location (default is local). """
-	env.host_string = hosts.get(location)
+	# old: env.host_string = hosts.get(location), replaced by:
+	execute(getattr(sys.modules[__name__], '_%s_server' % location))
 	db = db_settings.get(location)
 	bash_cmd_vars = (db.get('user'), db.get('pass'), db.get('host'), db.get('db'), dump_fn)
 	run('mysql -u %s -p%s -h %s %s < %s' % bash_cmd_vars)
@@ -89,7 +90,7 @@ def __dump_local_db():
 def dump_local_db_for_deploy():
 	""" Wrapper for dump_local_db. Runs migration to prod, dumps, then migrates back to local. """
 	run_db_migration('prod')
-	result = dump_local_db()
+	result = dump_db('local')
 	run_db_migration('local')
 	return result
 
@@ -122,13 +123,18 @@ def stash(host = 'local'):
 @task
 def unstash(host = 'local'):
 	""" Inserts the "stash"-ed database on the specified host. (:host = local)"""
+	execute(getattr(sys.modules[__name__], '_%s_server' % host))
 	db = db_settings.get(host)
 	filename = '%s.%s.stash.sql' % ( db.get('db','unknowndb'), host)
 	dump_full_fn = dirs.get(host).get('archive', '~/archive') + '/' + filename
-	if confirm('Are you sure you wish to insert the stash database to the `%s` host?' % host, False):
-		if confirm('Do you wish to backup the current database before overwriting it?'):
-			dump_db(host) # temporary-ish, this dumps a backup of the existing DB before un-stashing
-		insert_database(dump_full_fn, 'local')
+	if not exists(dump_full_fn):
+		print('No stash file exists on the `%s` host.' % host)
+		return
+	else:
+		if confirm('Are you sure you wish to insert the stash database to the `%s` host?' % host, False):
+			if confirm('Do you wish to backup the current database before overwriting it?'):
+				dump_db(host) # temporary-ish, this dumps a backup of the existing DB before un-stashing
+			insert_database(dump_full_fn, 'local')
 
 def run_db_migration(dest='local'):
 	""" Executes MySQL commands for migrating Wordpress from one environment to another. Parameter defaults to "local", but any environment defined in the settings.db dictionary (default: local, prod) can be used. """
