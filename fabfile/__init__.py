@@ -79,7 +79,7 @@ def update(source = 'prod', destination = 'local'):
 
 @task
 def dump(location = 'prod', fetch = False)	:
-	""" Dumps location database to archive folder. Fetch default is false. (:location, :fetch) """
+	""" Dumps location database to archive folder. (:location = prod, :fetch = False) """
 	print('-----------------------------------------')
 	if fetch:
 		print('Dumping/fetching %s database.' % (location))
@@ -87,8 +87,8 @@ def dump(location = 'prod', fetch = False)	:
 		dump_fn = execute(getattr(db, fn_to_execute))
 	else:
 		print('Dumping %s database.' % (location))
-		fn_to_execute = 'dump_%s_db' % (location)
-		dump_fn = execute(getattr(db, fn_to_execute))
+		fn_to_execute = 'dump_db'
+		dump_fn = execute(getattr(db, fn_to_execute), location)
 
 	print('Filename: %s' % dump_fn)
 	print('-----------------------------------------')
