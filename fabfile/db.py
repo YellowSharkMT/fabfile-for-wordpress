@@ -32,9 +32,8 @@ def _local_server(): # Note: we use _local_server() so there's ZERO confusion wi
 ## Public functions for the Fab commands.	
 def import_prod_to_local():
 	""" Imports Wordpress database from Prod to Local. """
-	result = execute(fetch_prod_db)
-
-	insert_database(result.get(hosts.get('prod')), 'local')
+	result = fetch_prod_db()
+	insert_database(result, 'local')
 	run_db_migration('local')
 
 
