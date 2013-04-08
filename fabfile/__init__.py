@@ -120,18 +120,30 @@ def sync_local_to_prod():
 
 def sync_uploads(source_host, dest_host):
 	""" Uses rsync to pull down uploads from :source_host to :dest_host. (from the settings file) """
+
+	# TODO: Improve the logic in this function. The problem is that rsync requires a connection between a local host,
+	# and a remote one, so there's a bit of validation that should probably happen here, so that users get accurate
+	# error info and can figure things out maybe a bit quicker. Big problem here though is that we're only testing for
+	# prod & local hosts, where we should perhaps just be checking if one of the hosts is local, and then just use the
+	# other one accordingly. There's a whole bunch of if/else blocks in all of that though, so I want to think on this
+	# problem a bit before making a solution.
+	rsync_vars = False
 	if source_host == 'prod':
-		rsync_vars= {
-		'source': '%s:%s' % (hosts.get(source_host), dirs.get(source_host).get('uploads')),
-		'dest': '%s' % (dirs.get(dest_host).get('uploads'))
+		rsync_vars = {
+			'source': '%s:%s' % (hosts.get(source_host), dirs.get(source_host).get('uploads')),
+			'dest': '%s' % (dirs.get(dest_host).get('uploads'))
 		}
 	elif source_host == 'local':
-		rsync_vars= {
-		'source': '%s' % (dirs.get(source_host).get('uploads')),
-		'dest': '%s:%s' % (hosts.get(dest_host), dirs.get(dest_host).get('uploads'))
+		rsync_vars = {
+			'source': '%s' % (dirs.get(source_host).get('uploads')),
+			'dest': '%s:%s' % (hosts.get(dest_host), dirs.get(dest_host).get('uploads'))
 		}
 
-	rsync_command = 'rsync -ravz %(source)s/ %(dest)s' % rsync_vars
-	# Note: this is run on the local server, rsync requires that ONE of the servers is the local.
-	local(rsync_command)	
+	if not rsync_vars:
+		print('Sorry, couldn\'t create the rsync command. Check the documentation for more info. This is relatively-new functionality, and will be improved in future releases.')
+		return
+	else:
+		rsync_command = 'rsync -ravz %(source)s/ %(dest)s' % rsync_vars
+		# Note: this is run on the local server, rsync requires that ONE of the servers is the local.
+		local(rsync_command)
 	
