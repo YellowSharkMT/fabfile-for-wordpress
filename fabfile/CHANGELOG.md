@@ -1,3 +1,14 @@
+## 0.3b (April 5, 2013)
+
+- Deprecated WP_*_UPLOADS arguments in the settings file.
+- Bugfix: class Release needed to be typed to object
+- Added tools module, has 2 tasks currently:
+    1.) a "fix" on the code in the plugins directory (explained below).
+    2.) testing functionality for the settings file: for each host, it checks the following:
+        - connection: runs `uname -a`
+        - directories: test if they exist or not, reports result
+        - database: verifies MySQL connection
+
 ## 0.3a (March 26, 2013)
 
 Added an `extend` module, so end-users can write their own customized classes to extend our own. An example of the intended usage is included in `fabfile/extend/deploy/release_example.py`, demonstrating how to add your own actions to the post-release function (the example shows how to symlink a directory into the new webroot).
