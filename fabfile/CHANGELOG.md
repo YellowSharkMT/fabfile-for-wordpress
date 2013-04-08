@@ -1,3 +1,10 @@
+## 0.32b (April 8, 2013)
+
+- Added dry-run functionality to the deploy/update process.
+- Bug fixes
+- Moved the USE_TOOLS settings from `fabfile/__init__.py` into `fabfile\settings_example.py`. Users will need to update their settings file and add this value, otherwise they will get an error that the settings file couldn't be loaded.
+
+
 ## 0.31b (April 8, 2013)
 
 - Added new tasks to db module: `stash` & `unstash`. The `stash` task dumps the current database, and gives it a "stash" name, instead of a timestamp-based name. The `unstash` task will insert a "stashed" dump back into the database. (Note: it confirms whether you want to do this, and also it offers to make a backup of the current DB before overwriting it.)
