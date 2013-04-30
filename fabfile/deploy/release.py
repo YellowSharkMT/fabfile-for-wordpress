@@ -63,7 +63,7 @@ class Release(object):
 		
 		cmds = [
 			'git clone %s %s/%s' % (settings.dirs.get(destination).get('git_repo'), releases, self.release_name),
-			'cd %s/%s && git checkout %s' % (releases, self.release_name, settings.dirs.get(destination).get('git_branch'),'master'),
+			'cd %s/%s && git checkout %s' % (releases, self.release_name, settings.dirs.get(destination).get('git_branch','master')),
 			'ln -s %s/%s %s.new' % (settings.dirs.get(destination).get('releases'), self.release_name, webroot),
 			'mv %(webroot)s %(webroot)s.old; mv %(webroot)s.new %(webroot)s;' % {'webroot': webroot},
 			'rm %(webroot)s.old' % {'webroot': webroot},
