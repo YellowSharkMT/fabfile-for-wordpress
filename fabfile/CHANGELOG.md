@@ -1,3 +1,8 @@
+## 0.44 (April 30, 2013)
+
+- Added feature to the Release+Git functionality: ability to specify branch names for the various git repos. Defaults to `master` in case this value isn't set in the `settings.py` file, see the `settings_example.py` file for correct usage if you wish to push to alternate branch names (for example: `git push prod dev:deploy` would push your local `dev` branch to the remote `deploy` branch). Also improved the logic a bit.
+- In the Database tools, improved the stash/unstash functionality to allow users to specify a filename. Useful for creating a named backup, or for restoring any one of the existing dump files in the archive directory.
+
 ## 0.32b (April 8, 2013)
 
 - Added dry-run functionality to the deploy/update process.
