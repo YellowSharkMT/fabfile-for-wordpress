@@ -67,7 +67,7 @@ def migrate(source = 'prod', destination = 'local'):
 
 @task
 def update(source = 'prod', destination = 'local', dry_run = False):
-	""" Executes code migration. Default direction is prod to local. (:source, :destination) """
+	""" Executes code migration. Default direction is prod to local. (:source, :destination, :dry_run = False) """
 	print('-----------------------------------------')
 	print('Updating code from %s to %s' % (source, destination))
 	fn_to_execute = 'sync_%s_to_%s' % (source, destination)
