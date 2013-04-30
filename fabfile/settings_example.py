@@ -43,20 +43,23 @@ dirs = {
 		'archive': '/www/_archive/myproject',
 		'releases': False,
 		'webroot': '/www/myproject',
+		'git_branch':'master', 					# OPTIONAL: Used for release via git
 	   	'uploads': '/www/myproject/wp-content/uploads', # OPTIONAL, "False" if not using rsync on uploads dirs.
 	},
 	'prod':{
 		'archive': '/path/to/archive/folder',
 		'releases': '/path/to/releases/folder', # OPTIONAL: Only needed for deploy.release module. False if not using that.
 		'webroot': '/path/to/public_html',
-		'git_repo': '/path/to/git/repo.git',
-		'uploads': '/path/to/wordpress/uploads',  # OPTIONAL, "False" if not using rsync on uploads dirs.
+		'git_repo': '/path/to/git/repo.git',	# OPTIONAL: Used for release via git
+		'git_branch':'master', 					# OPTIONAL: Used for release via git
+		'uploads': '/path/to/wordpress/uploads',	# OPTIONAL, "False" if not using rsync on uploads dirs.
 	},
 	'backup':{
 		'archive': '/path/to/archive/folder',
 		'releases': '/path/to/releases/folder', # Not needed (yet) for backup. Optional.
 		'webroot': '/path/to/public_html', 		# Not needed (yet) for backup. Optional.
-		'git_repo': '/path/to/git/repo.git',
+		'git_repo': '/path/to/git/repo.git',	# This is absolutely required currently, we only can back up to git.
+		'git_branch':'master', 					# OPTIONAL: Used for release via git
 		'uploads': '/path/to/wordpress/uploads', # OPTIONAL, "False" if not using rsync on uploads dirs.
 	}
 }
