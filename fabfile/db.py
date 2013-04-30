@@ -113,18 +113,25 @@ def dump_db(host, filename = False):
 
 
 @task
-def stash(host = 'local'):
+def stash(host = 'local', stash_name = False):
 	""" Dumps the database on the specified host, bug gives it a "stash" name, so it can be pulled back in quickly via `unstash`. (:host) """
 	db = db_settings.get(host)
-	filename = '%s.%s.stash.sql' % ( db.get('db','unknowndb'), host)
+	if not stash_name:
+		filename = '%s.%s.stash.sql' % ( db.get('db','unknowndb'), host)
+	else:
+		filename = stash_name
 	dump_db(host, filename)
 
 @task
-def unstash(host = 'local'):
+def unstash(host = 'local', stash_name = False):
 	""" Inserts the "stash"-ed database on the specified host. (:host = local)"""
 	execute(getattr(sys.modules[__name__], '_%s_server' % host))
 	db = db_settings.get(host)
-	filename = '%s.%s.stash.sql' % ( db.get('db','unknowndb'), host)
+	if not stash_name:
+		filename = '%s.%s.stash.sql' % ( db.get('db','unknowndb'), host)
+	else:
+		filename = stash_name
+		
 	dump_full_fn = dirs.get(host).get('archive', '~/archive') + '/' + filename
 	if not exists(dump_full_fn):
 		print('No stash file exists on the `%s` host.' % host)
