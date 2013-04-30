@@ -40,10 +40,17 @@ class Release(object):
 
 		# this is the to-be-updated code, which does indeed work:
 		with cd(settings.dirs.get(source).get('webroot')):
-			print('[DRY RUN: %s] Preparing to push git repo from %s to %s' % (source, source, destination))
-			# Right here, it is absolutely critical that my local git repo has a remote named "prod". 
-			# TODO: be able to specify branches?
-			cmd = 'git push %s master' % destination
+			if self.dry_run:
+				print('[DRY RUN: %s] Preparing to push git repo from %s to %s' % (source, source, destination))
+			else:
+				print('Preparing to push git repo from %s to %s' % (source, destination))
+
+			# Right here, it is absolutely critical that my local git repo has a remote named "prod".
+			cmd = 'git push %(dest)s %(local_branch)s:%(dest_branch)s' % {
+				'dest': destination,
+				'local_branch': settings.dirs.get(source).get('git_branch', 'master'),
+				'dest_branch': settings.dirs.get(destination).get('git_branch', 'master'),
+			}
 			if self.dry_run:
 				print(('[DRY RUN: %s] ' % source) + cmd)
 			else:
@@ -56,8 +63,10 @@ class Release(object):
 		
 		cmds = [
 			'git clone %s %s/%s' % (settings.dirs.get(destination).get('git_repo'), releases, self.release_name),
+			'cd %s/%s && git checkout %s' % (releases, self.release_name, settings.dirs.get(destination).get('git_branch'),'master'),
 			'ln -s %s/%s %s.new' % (settings.dirs.get(destination).get('releases'), self.release_name, webroot),
-			'mv %(webroot)s %(webroot)s.old; mv %(webroot)s.new %(webroot)s; rm %(webroot)s.old' % {'webroot': webroot},
+			'mv %(webroot)s %(webroot)s.old; mv %(webroot)s.new %(webroot)s;' % {'webroot': webroot},
+			'rm %(webroot)s.old' % {'webroot': webroot},
 		]
 		confirm_msg = 'About to clone the repo on the destination server, and unlink/re-link the webroot. Proceed?'
 		if self.dry_run:
