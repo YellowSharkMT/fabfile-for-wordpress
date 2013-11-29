@@ -20,7 +20,7 @@ class Release(object):
 		self.git = git
 		self.svn = svn
 		self.dry_run = dry_run
-		self.release_name = time.strftime('%Y%m%d%H%M%S')
+		self.release_name = env.release = time.strftime('%Y%m%d-%H%M%S')
 		
 	def perform(self, source = 'local', destination = 'prod'):
 		if self.dry_run:
@@ -35,7 +35,7 @@ class Release(object):
 		# Push files from source webroot to destination repo
 		env.host_string = settings.hosts.get(source)
 
-		dest_dirs = settings.dirs.get(destination);
+		dest_dirs = settings.dirs.get(destination)
 		#webroot = dest_dirs.get('webroot')
 		releases = dest_dirs.get('releases')
 		source_dirs = settings.dirs.get(source)
@@ -48,6 +48,7 @@ class Release(object):
 			else:
 				print('Preparing to push git repo from %s to %s' % (source, destination))
 
+			# Right here, it is absolutely critical that my local git repo has a remote named "prod".
 			cmd = 'git push %(dest)s %(local_branch)s:%(dest_branch)s' % {
 				'dest': destination,
 				'local_branch': source_dirs.get('git_branch', 'master'),
@@ -58,7 +59,7 @@ class Release(object):
 			else:
 				run(cmd)
 			
-		# Pull files from destination repo to destination webroot							
+		# Pull files from destination repo to destination webroot
 		env.host_string = settings.hosts.get(destination)							
 		cmd_data = {
 			'repo': dest_dirs.get('git_repo'),
@@ -70,7 +71,7 @@ class Release(object):
 		prep_commands = [
 			'git clone --branch=%(branch)s %(repo)s %(releases)s/%(release)s' % cmd_data,
 			'rm -rf %(releases)s/%(release)s/.git*' % cmd_data,
-			'ln -s %(releases)s/%(release)s %(releases)s/new' % cmd_data,			
+			'ln -s %(releases)s/%(release)s %(releases)s/new' % cmd_data,
 		]
 		transition_commands = [
 			'rm %(releases)s/previous' % cmd_data,
@@ -87,11 +88,11 @@ class Release(object):
 					print(('[DRY RUN: %s] ' % destination ) + cmd)
 				else:
 					run(cmd)
-					
+
 			print('## Triggering pre_transition hook... ##')
 			self.pre_transition(destination)
 
-			print('## Executing transition_commands actions... ##')				
+			print('## Executing transition_commands actions... ##')
 			for cmd in transition_commands:
 				if self.dry_run:
 					print(('[DRY RUN: %s] ' % destination ) + cmd)
@@ -104,13 +105,14 @@ class Release(object):
 			
 		self.post_perform(destination)
 		
-	def pre_transition(self, destination):
-		pass
-	
 	def pre_perform(self, location):
 		# Custom stuff would go here, backing up static files, whatever.
 		# if self.dry_run:
 		# else:
+		pass
+
+	def pre_transition(self, location):
+		# Custom stuff would go here, like sym-linking stuff into place, etc
 		pass
 		
 	def post_perform(self, location):
