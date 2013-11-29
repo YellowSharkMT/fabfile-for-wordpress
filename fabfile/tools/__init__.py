@@ -6,7 +6,7 @@ from fabric.context_managers import settings as fab_settings
 
 import fabfile.settings as settings
 
-@task
+@task(alias='fix_plugins')
 def update_code_plugins_dir():
   """ Runs search/replace on plugins folder for plugins_url and plugin_dir_url(). See docs for more info. """
   plugins_dir = settings.dirs.get('local').get('plugins')
