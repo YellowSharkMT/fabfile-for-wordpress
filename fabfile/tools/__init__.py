@@ -3,7 +3,7 @@ from fabric.api import *
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists
 from fabric.context_managers import settings as fab_settings
-
+import provision
 import fabfile.settings as settings
 
 @task(alias='fix_plugins')
