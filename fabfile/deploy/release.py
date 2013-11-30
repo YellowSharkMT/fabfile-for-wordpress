@@ -76,7 +76,7 @@ class Release(object):
             'ln -s %(releases)s/%(release)s %(releases)s/new' % cmd_data,
         ]
         transition_commands = [
-            'rm %(releases)s/previous' % cmd_data,
+            'rm -rf %(releases)s/previous' % cmd_data,
             'mv %(releases)s/current %(releases)s/previous && mv %(releases)s/new %(releases)s/current' % cmd_data,
         ]
         confirm_msg = 'About to clone the repo on the destination server, and unlink/re-link the webroot. Proceed?'
