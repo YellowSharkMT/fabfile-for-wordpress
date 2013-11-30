@@ -1,3 +1,4 @@
 /.idea
 *.pyc
 /fabfile/settings.py*
+/fabfile/settings_client_*.py*
