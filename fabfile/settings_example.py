@@ -19,7 +19,11 @@ hosts = {
 	'local':'localhost',
 	'backup':'user@backupserver.com', # OPTIONAL: For offsite backup. See the fabfile.deploy.backup module for more info.
 }
-
+site_urls = {
+	'local':'http://local.xyz.com',
+	'dev':'http://dev.xyz.com',
+	'prod':'http://www.xyz.com',
+}
 # Database settings for the Prod % Local servers.
 db_settings = {
 	'local':{
