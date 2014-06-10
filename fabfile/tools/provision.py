@@ -6,8 +6,14 @@ from fabric.contrib.files import *
 from fabfile import settings as fab_settings
 
 @task
-def do_it(host):
-  p = Provision(host)
+def run(host):
+    """
+    NOT TESTED - Executes the provisioning process. (host)
+
+    You'll want to hand-customize this script, it's not battle-tested at all. Consider this script as not much more
+    than a rough guideline.
+    """
+    Provision(host)
 
 class Provision:
     dirs = False

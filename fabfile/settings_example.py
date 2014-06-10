@@ -15,58 +15,65 @@ USE_TOOLS = True
 # Host connection strings for Fabric. If env.use_ssh_config is set to True, you can use aliases assigned in
 # your .ssh/config file.
 hosts = {
-	'prod':'user@prodhost.com',
-	'local':'localhost',
-	'backup':'user@backupserver.com', # OPTIONAL: For offsite backup. See the fabfile.deploy.backup module for more info.
+    'prod': 'user@prodhost.com',
+    'local': 'localhost',
+    'backup': 'user@backupserver.com',
+    # OPTIONAL: For offsite backup. See the fabfile.deploy.backup module for more info.
 }
-
+site_urls = {
+    'local': 'http://local.xyz.com',
+    'dev': 'http://dev.xyz.com',
+    'prod': 'http://www.xyz.com',
+}
 # Database settings for the Prod % Local servers.
 db_settings = {
-	'local':{
-		'host':'localhost',
-		'user':'user',
-		'pass':'password',
-		'db':'database'
-	},
-	'prod':{
-		'host':'localhost',
-		'user':'user',
-		'pass':'password',
-		'db':'database'
-	}
+    'local': {
+        'host': 'localhost',
+        'user': 'user',
+        'pass': 'password',
+        'db': 'database'
+    },
+    'prod': {
+        'host': 'localhost',
+        'user': 'user',
+        'pass': 'password',
+        'db': 'database'
+    }
 }
 
-## Archive folder is used for dumping data, and storing downloaded/uploaded files.
+# Archive folder is used for dumping data, and storing downloaded/uploaded files.
 # Note: No trailing slashes, please. Things might not be 100% bullet-proof in that regards.
 dirs = {
-	'local':{
-		'archive': '/www/_archive/myproject',
-		'releases': False,
-		'webroot': '/www/myproject',
-		'git_branch':'master', 					# OPTIONAL: Used for release via git
-	   	'uploads': '/www/myproject/wp-content/uploads', # OPTIONAL, "False" if not using rsync on uploads dirs.
-	},
-	'prod':{
-		'archive': '/path/to/archive/folder',
-		'releases': '/path/to/releases/folder', # OPTIONAL: Only needed for deploy.release module. False if not using that.
-		'webroot': '/path/to/public_html',
-		'git_repo': '/path/to/git/repo.git',	# OPTIONAL: Used for release via git
-		'git_branch':'master', 					# OPTIONAL: Used for release via git
-		'uploads': '/path/to/wordpress/uploads',	# OPTIONAL, "False" if not using rsync on uploads dirs.
-	},
-	'backup':{
-		'archive': '/path/to/archive/folder',
-		'releases': '/path/to/releases/folder', # Not needed (yet) for backup. Optional.
-		'webroot': '/path/to/public_html', 		# Not needed (yet) for backup. Optional.
-		'git_repo': '/path/to/git/repo.git',	# This is absolutely required currently, we only can back up to git.
-		'git_branch':'master', 					# OPTIONAL: Used for release via git
-		'uploads': '/path/to/wordpress/uploads', # OPTIONAL, "False" if not using rsync on uploads dirs.
-	}
+    'local': {
+        'archive': '/www/_archive/myproject',
+        'releases': False,
+        'webroot': '/www/myproject',
+        'git_branch': 'master',
+        'uploads': '/www/myproject/wp-content/uploads',
+    },
+    'prod': {
+        'archive': '/path/to/archive/folder',
+        'releases': '/path/to/releases/folder',
+        'webroot': '/path/to/public_html',
+        'git_repo': '/path/to/git/repo.git',
+        'git_branch': 'master',
+        'uploads': '/path/to/wordpress/uploads',    # TODO: implement this into the extend.deploy.release example
+    },
+    'backup': {
+        # The backup environment requires a smaller set of config variables, since we just uplaod database dumps,
+        # and push the git repo.
+        'archive': '/path/to/archive/folder',   # Database dumps go here
+        'git_repo': '/path/to/git/repo.git',    # Location of the git repo
+    }
 }
 
-# Location of your Wordpress installation, relative to the site root. NO LEADING/TRAILING SLASH. Leave blank if
-# Wordpress is installed at the same location as the LOCAL_URL/PROD_URL settings, for example if WP is installed
-# at the site root. Specifcally, if your WP wp_options.siteurl is different than your wp_options.home (referring to your database's `wp_options` table), than you need to edit this value, and enter that location here. (This is used to.) No leading or trailing slashes.
+"""
+Location of your Wordpress installation, relative to the site root. NO LEADING/TRAILING SLASH. Leave blank if Wordpress
+is installed at the same location as the LOCAL_URL/PROD_URL settings, for example if WP is installed at the site root.
+
+Specifcally, if your WP wp_options.siteurl is different than your wp_options.home (referring to your database's
+`wp_options` table), than you need to edit this value, and enter that location here. No leading or trailing slashes.
+"""
 WP_FOLDER = ''
 
 # Wordpress table prefix, used for database migrations/operations. WP default is "wp"

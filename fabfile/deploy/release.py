@@ -20,7 +20,7 @@ class Release(object):
         self.git = git
         self.svn = svn
         self.dry_run = dry_run
-        self.release_name = env.release = time.strftime('%Y%m%d-%H%M%S')
+        self.release_name = env.release = settings.PROJECT_NAME + '_release_' + time.strftime('%Y%m%d-%H%M%S')
         
     def perform(self, source = 'local', destination = 'prod'):
         if self.dry_run:
@@ -31,7 +31,7 @@ class Release(object):
             print(':: ------------------------------------')
                     
         print('## Triggering pre_perform hook... ##')
-        #self.pre_perform(destination)
+        self.pre_perform(destination)
         # Push files from source webroot to destination repo
         env.host_string = settings.hosts.get(source)
 
@@ -108,17 +108,20 @@ class Release(object):
         self.post_perform(destination)
         
     def pre_perform(self, location):
-        # Custom stuff would go here, backing up static files, whatever.
-        # if self.dry_run:
-        # else:
+        """
+        This hook executes first, before pushing the git repository up to the remote server.
+        """
         pass
 
     def pre_transition(self, location):
-        # Custom stuff would go here, like sym-linking stuff into place, etc
+        """
+        This hook executes AFTER the git push & webroot checkout, and BEFORE the new webroot is symlinked into place.
+        This is a good place to perform any file cleanup on the new webroot, or to link static assets into place.
+        """
         pass
         
     def post_perform(self, location):
-        # Custom stuff would go here, like if you need to symlink some stuff into place, etc.
-        # if self.dry_run:
-        # else:
+        """
+        This hook executes AFTER the new webroot has been symlinked into place.
+        """
         pass
