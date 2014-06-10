@@ -3,31 +3,7 @@ from fabric.api import *
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists
 from fabric.context_managers import settings as fab_settings
-
 import fabfile.settings as settings
-
-@task
-def update_code_plugins_dir():
-  """ Runs search/replace on plugins folder for plugins_url and plugin_dir_url(). See docs for more info. """
-  plugins_dir = settings.dirs.get('local').get('plugins')
-  if plugins_dir != False:
-    print('Switching to local directory "%s"' % plugins_dir)
-    with lcd(plugins_dir):
-      if confirm('About to search/replace a lot of files in the %s folder. Do you wish to continue?' % plugins_dir):
-        with fab_settings(warn_only=True):
-          sed_command = 'find . -type f -print0 | xargs -0 sed -i \'s/%(find)s/%(replace)s/g\'' % {
-            'find':'plugins_url(',
-            'replace':'plugins_url_override(',
-            }
-          #print('Command to run: ' + sed_command)
-          local(sed_command)
-
-          sed_command = 'find . -type f -print0 | xargs -0 sed -i \'s/%(find)s/%(replace)s/g\'' % {
-            'find':'plugin_dir_url(',
-            'replace':'plugin_dir_url_override(',
-            }
-          #print('Command to run: ' + sed_command)
-          local(sed_command)
 
 @task
 def test_host(host):
