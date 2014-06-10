@@ -19,6 +19,7 @@
 from __future__ import with_statement
 import time, random, string, sys
 from fabric.api import *
+from fabric.contrib.console import confirm
 import db
 
 # Import Settings:
@@ -48,22 +49,23 @@ env.use_ssh_config = True
 #############################################################################
 ## Public functions for the Fab commands.
 @task
-def deploy(source = 'prod', destination = 'local'):
+def deploy(source = 'prod', destination = 'local', dry_run=False):
 	""" Executes migrate and update. Default direction is prod to local. (:source, :destination) """
-	execute(migrate, source, destination)
-	execute(update, source, destination)
+	execute(migrate, source, destination, dry_run)
+	execute(update, source, destination, dry_run)
 
 
 @task
-def migrate(source = 'prod', destination = 'local'):
+def migrate(source = 'prod', destination = 'local', dry_run=False):
 	""" Executes database migration. Default direction is prod to local. (:source, :destination) """
-	print('-----------------------------------------')
-	print('Migrating database from %s to %s' % (source, destination))
-	fn_to_execute = 'import_%s_to_%s' % (source, destination)
-	execute(getattr(db, fn_to_execute))
-	#getattr(db, fn_to_execute)()
-	print('-----------------------------------------')
-
+	if confirm('You are about to migrate the %s database to %s. Is that ok?' % (source, destination)):
+		print('-----------------------------------------')
+		print('Migrating database from %s to %s' % (source, destination))
+		fn_to_execute = 'import_%s_to_%s' % (source, destination)
+		execute(getattr(db, fn_to_execute), dry_run)
+		print('-----------------------------------------')
+	else:
+		print('Exiting...')
 
 @task
 def update(source = 'prod', destination = 'local', dry_run = False):
@@ -114,6 +116,12 @@ def sync_local_to_prod(dry_run = False):
 	""" Syncs files from local to prod. """
 	release = Release(git = True, dry_run = dry_run)
 	release.perform()
+	pass
+
+def sync_local_to_dev(dry_run = False):
+	""" Syncs files from local to dev (aliases to sync_local_to_prod) """
+	release = Release(git = True, dry_run = dry_run)
+	release.perform(destination = 'dev')
 	pass
 
 def sync_uploads(source_host, dest_host):
